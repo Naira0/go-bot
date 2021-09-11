@@ -29,16 +29,6 @@ func (c *Context) Send_embed(embed *dg.MessageEmbed) (*dg.Message, error) {
 	return c.Client.Session.ChannelMessageSendEmbed(c.Message.ChannelID, embed)
 }
 
-func (c *Context) Find_group(name string) (*Group, bool) {
-	for _, group := range c.Client.CommandGroups {
-		if group.Name == strings.ToLower(name) {
-			return group, true
-		}
-	}
-
-	return nil, false
-}
-
 // Find_role gets a role struct from a string
 // string must be either the role id or the role name
 func (c *Context) Find_role(data string) *dg.Role {
