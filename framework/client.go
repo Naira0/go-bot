@@ -10,7 +10,7 @@ type Client struct {
 	OwnerID       string
 	Session       *dg.Session
 	Commands      map[string]*Command
-	CommandGroups []*Group
+	CommandGroups map[string]*Group
 	DefaultPrefix string
 	// the function to check if a command should be allowed to run.
 	Check      func(s *dg.Session, m *dg.Message, cmd *Command) bool
@@ -66,6 +66,12 @@ func (c *Client) Add_cmd(cmd *Command) {
 }
 
 func (c *Client) Add_group(group *Group) *Group {
-	c.CommandGroups = append(c.CommandGroups, group)
+
+	if group.Name == "" {
+		panic("You must provide a Name field when adding a group to the client")
+	}
+
+	c.CommandGroups[group.Name] = group
+
 	return group
 }

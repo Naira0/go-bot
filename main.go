@@ -42,15 +42,11 @@ func init_tables(db *sql.DB) error {
 func main() {
 	db, err := sql.Open("postgres", "user=postgres dbname=go_bot password=yes900x20 sslmode=disable")
 
-	if err != nil {
-		log.Fatalf("Unable to open postgres connection %s", err.Error())
-	}
+	assert_err(err, "Unable to open postgres connection")
 
 	err = init_tables(db)
 
-	if err != nil {
-		log.Fatalf("Could not create one or more psql tables %s", err.Error())
-	}
+	assert_err(err, "Could not create one or more psql tables")
 
 	client.Settings = &bot.Settings{Db: db}
 	client.Conn = db
@@ -58,15 +54,11 @@ func main() {
 	var c Config
 	data, err := os.ReadFile("config.json")
 
-	if err != nil {
-		log.Fatal("Could not open json file")
-	}
+	assert_err(err, "Could not open json file")
 
 	err = json.Unmarshal(data, &c)
 
-	if err != nil {
-		log.Fatal("Could not parse json file")
-	}
+	assert_err(err, "Could not parse json file")
 
 	client.OwnerID = c.Owner_id
 	client.DefaultPrefix = c.Prefix
@@ -74,11 +66,9 @@ func main() {
 
 	err = client.New(c.Token)
 
-	client.Session.StateEnabled = true
+	assert_err(err, "Could not create client")
 
-	if err != nil {
-		log.Fatal("Client could not login", err)
-	}
+	client.Session.StateEnabled = true
 
 	register_cmds()
 
@@ -88,16 +78,19 @@ func main() {
 
 	err = client.Session.Open()
 
-	if err != nil {
-		client.Session.Close()
-		log.Fatal("Error opening websocket connection ", err)
-	}
+	assert_err(err, "Error opening websocket connection")
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
 	client.Session.Close()
+}
+
+func assert_err(err error, message string) {
+	if err != nil {
+		log.Fatalln(message, err.Error())
+	}
 }
 
 func check(s *dg.Session, m *dg.Message, cmd *bot.Command) bool {

@@ -38,7 +38,7 @@ func echo_cmd(ctx *bot.Context) error {
 func help_cmd(ctx *bot.Context) error {
 
 	if len(ctx.Args) >= 1 {
-		group, exists := ctx.Find_group(ctx.Args[0])
+		group, exists := ctx.Client.CommandGroups[ctx.Args[0]]
 
 		var command_fields []*dg.MessageEmbedField
 

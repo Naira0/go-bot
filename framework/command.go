@@ -123,11 +123,13 @@ func Eval_cmd(client *Client, message *discord.Message) (bool, error) {
 
 func Verify_cmd(cmd string, commands map[string]*Command) (*Command, bool) {
 
+	// finds command by command name
 	if _, exists := commands[cmd]; exists {
 		map_val := commands[cmd]
 		return map_val, true
 	}
 
+	// finds command by alias
 	for _, c := range commands {
 		for _, alias := range c.Alias {
 			if cmd == alias {
